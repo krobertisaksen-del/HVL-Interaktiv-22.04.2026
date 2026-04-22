@@ -18,18 +18,43 @@ interface PlayerProps {
 
 export const Player: React.FC<PlayerProps> = ({ activity, onEdit }) => {
   const [started, setStarted] = useState(false);
+  const [scoreSubmitted, setScoreSubmitted] = useState(false);
+
+  const handleSuccess = async (result: any) => {
+    if (scoreSubmitted) return; // Prevent multiple submissions
+    
+    // Result payload usually has { score, total }
+    const scoreGiven = result?.score !== undefined ? result.score : 100;
+    const scoreMaximum = result?.total !== undefined ? result.total : 100;
+
+    try {
+      setScoreSubmitted(true);
+      const res = await fetch('/api/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scoreGiven, scoreMaximum })
+      });
+      const data = await res.json();
+      if (data.success && data.response) {
+         console.log('✅ Score submitted to Canvas automatically!');
+      }
+    } catch (err) {
+      console.error('Failed to submit score:', err);
+      // We don't block the user, it just silently fails if they aren't in a graded LTI launch
+    }
+  };
 
   const renderActivity = (type: string, data: any) => {
     switch (type) {
-        case 'Flervalg': return <MCPlayer data={data} />;
-        case 'Sant/Usant': return <TFPlayer data={data} />;
-        case 'Fyll inn': return <ClozePlayer data={data} />;
-        case 'Bilde Hotspot': return <HotspotPlayer data={data} />;
-        case 'Interaktiv Video': return <VideoPlayer data={data} />;
-        case 'Tidslinje': return <TimelinePlayer data={data} />;
-        case 'Dra og Slipp': return <DragDropPlayer data={data} />;
-        case 'Minnespel': return <MemoryPlayer data={data} />;
-        case 'Fleire saman': return <MixedPlayer data={data} />;
+        case 'Flervalg': return <MCPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Sant/Usant': return <TFPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Fyll inn': return <ClozePlayer data={data} onSuccess={handleSuccess} />;
+        case 'Bilde Hotspot': return <HotspotPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Interaktiv Video': return <VideoPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Tidslinje': return <TimelinePlayer data={data} onSuccess={handleSuccess} />;
+        case 'Dra og Slipp': return <DragDropPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Minnespel': return <MemoryPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Fleire saman': return <MixedPlayer data={data} onSuccess={handleSuccess} />;
         default: return <div>Ukjend aktivitet</div>;
     }
   };

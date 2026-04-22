@@ -405,16 +405,43 @@ lti.app.post('/api/deeplink', async (req, res) => {
       title: title,
       url: `${process.env.LTI_URL || ('https://' + req.get('host'))}/?activityId=${id}`, 
       custom: {
-        activityId: id // Redundant but safe
-      },
-      // Optional: grading support (lineItem) can be added here
+        activityId: id 
+      }
     };
 
-    const form = await lti.DeepLinking.createDeepLinkingForm(token, [resource], { message: 'Successfully added activity' });
+    const form = await lti.DeepLinking.createDeepLinkingForm(token, [resource], { message: 'Aktivitet lagt til i Canvas' });
     return res.send(form);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Deep linking failed' });
+  }
+});
+
+// --- SCORING API ---
+lti.app.post('/api/score', async (req, res) => {
+  try {
+    const token = res.locals.token;
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+    
+    // We only want to submit grades for students actually taking a grading-enabled assignment
+    if (!token.platformContext.endpoint || !token.platformContext.endpoint.lineitem) {
+      return res.json({ success: true, message: 'No gradebook column found for this launch. Ignoring score.' });
+    }
+
+    const { scoreGiven, scoreMaximum } = req.body;
+
+    const gradeObj = {
+      scoreGiven: Number(scoreGiven),
+      scoreMaximum: Number(scoreMaximum),
+      activityProgress: 'Completed',
+      gradingProgress: 'FullyGraded'
+    };
+
+    const response = await lti.Grade.SubmitScore(token, undefined, gradeObj);
+    return res.json({ success: true, response });
+  } catch (err) {
+    console.error('Scoring error:', err);
+    return res.status(500).json({ error: 'Failed to submit score to LMS' });
   }
 });
 
