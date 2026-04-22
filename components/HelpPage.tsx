@@ -175,6 +175,14 @@ export const HelpPage = () => {
           </div>
         </div>
       </section>
+      
+      {/* LICENSE SECTION */}
+      <section className="max-w-7xl mx-auto px-4 mt-24">
+         <div className="text-center text-slate-500 text-sm">
+             <p>HVL Interaktiv er delvis basert på og inspirert av open kjeldekode frå <a href="https://h5p.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-cyan-700">H5P</a>.</p>
+             <p>H5P er utgitt under MIT-lisensen. Copyright &copy; 2016 Joubel AS.</p>
+         </div>
+      </section>
 
     </div>
   );
