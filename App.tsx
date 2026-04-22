@@ -593,7 +593,7 @@ export default function HVLInteraktivApp() {
            )}
            {user?.isDeepLinking && (
                <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-bold text-sm border border-blue-200 flex items-center gap-2 animate-pulse">
-                   <CircleCheck size={16}/> Valg-modus (Legg til i Canvas)
+                   <CircleCheck size={16}/> Val-modus (Legg til i Canvas)
                </div>
            )}
            <nav className="flex gap-3">

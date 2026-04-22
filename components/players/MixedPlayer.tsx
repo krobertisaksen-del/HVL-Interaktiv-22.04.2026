@@ -46,13 +46,13 @@ export const MixedPlayer: React.FC<PlayerProps> = ({ data }) => {
 
   const renderSub = (type: string, subData: any) => {
       switch (type) {
-        case 'Flervalg': return <MCPlayer data={subData} onSuccess={handleStepSuccess} />;
-        case 'Sant/Usant': return <TFPlayer data={subData} onSuccess={handleStepSuccess} />;
+        case 'Fleirval': return <MCPlayer data={subData} onSuccess={handleStepSuccess} />;
+        case 'Sant/usant': return <TFPlayer data={subData} onSuccess={handleStepSuccess} />;
         case 'Fyll inn': return <ClozePlayer data={subData} onSuccess={handleStepSuccess} />;
-        case 'Bilde Hotspot': return <HotspotPlayer data={subData} onSuccess={handleStepSuccess} />;
-        case 'Interaktiv Video': return <VideoPlayer data={subData} onSuccess={handleStepSuccess} />;
+        case 'Bilete-hotspot': return <HotspotPlayer data={subData} onSuccess={handleStepSuccess} />;
+        case 'Interaktiv video': return <VideoPlayer data={subData} onSuccess={handleStepSuccess} />;
         case 'Tidslinje': return <TimelinePlayer data={subData} onSuccess={handleStepSuccess} />;
-        case 'Dra og Slipp': return <DragDropPlayer data={subData} onSuccess={handleStepSuccess} />;
+        case 'Dra og slepp': return <DragDropPlayer data={subData} onSuccess={handleStepSuccess} />;
         case 'Minnespel': return <MemoryPlayer data={subData} onSuccess={handleStepSuccess} />;
         default: return null;
       }

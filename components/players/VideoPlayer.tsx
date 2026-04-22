@@ -117,7 +117,7 @@ export const VideoPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
 
   if (!currentScene) return <div>Ingen video.</div>;
 
-  const ActiveInteractionPlayer = activeInteraction ? (activeInteraction.type === 'Flervalg' ? MCPlayer : (activeInteraction.type === 'Sant/Usant' ? TFPlayer : ClozePlayer)) : null;
+  const ActiveInteractionPlayer = activeInteraction ? (activeInteraction.type === 'Fleirval' ? MCPlayer : (activeInteraction.type === 'Sant/usant' ? TFPlayer : ClozePlayer)) : null;
 
   return (
     <div className="space-y-6">

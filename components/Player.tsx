@@ -46,13 +46,13 @@ export const Player: React.FC<PlayerProps> = ({ activity, onEdit }) => {
 
   const renderActivity = (type: string, data: any) => {
     switch (type) {
-        case 'Flervalg': return <MCPlayer data={data} onSuccess={handleSuccess} />;
-        case 'Sant/Usant': return <TFPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Fleirval': return <MCPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Sant/usant': return <TFPlayer data={data} onSuccess={handleSuccess} />;
         case 'Fyll inn': return <ClozePlayer data={data} onSuccess={handleSuccess} />;
-        case 'Bilde Hotspot': return <HotspotPlayer data={data} onSuccess={handleSuccess} />;
-        case 'Interaktiv Video': return <VideoPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Bilete-hotspot': return <HotspotPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Interaktiv video': return <VideoPlayer data={data} onSuccess={handleSuccess} />;
         case 'Tidslinje': return <TimelinePlayer data={data} onSuccess={handleSuccess} />;
-        case 'Dra og Slipp': return <DragDropPlayer data={data} onSuccess={handleSuccess} />;
+        case 'Dra og slepp': return <DragDropPlayer data={data} onSuccess={handleSuccess} />;
         case 'Minnespel': return <MemoryPlayer data={data} onSuccess={handleSuccess} />;
         case 'Fleire saman': return <MixedPlayer data={data} onSuccess={handleSuccess} />;
         default: return <div>Ukjend aktivitet</div>;

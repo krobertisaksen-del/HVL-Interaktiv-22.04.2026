@@ -387,7 +387,7 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
                                               n[idx] = { ...n[idx], interactions: updatedInts };
                                               update({...d, scenes: n, videoUrl: undefined, interactions: undefined});
                                           }} className={inputClass}>
-                                              <option value="Flervalg">Flervalg</option><option value="Sant/Usant">Sant/Usant</option><option value="Fyll inn">Fyll inn</option>
+                                              <option value="Fleirval">Fleirval</option><option value="Sant/usant">Sant/usant</option><option value="Fyll inn">Fyll inn</option>
                                           </select>
                                       </div>
                                       <div className="w-full sm:w-auto flex items-end pb-1.5">
@@ -415,14 +415,14 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
                                       )}
                                   </div>
                                   <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200">
-                                      {intr.type === 'Flervalg' && renderFlervalg(intr.data, nd => {
+                                      {intr.type === 'Fleirval' && renderFlervalg(intr.data, nd => {
                                           const n = [...scenes]; 
                                           const updatedInts = [...n[idx].interactions];
                                           updatedInts[intIdx] = { ...updatedInts[intIdx], data: nd };
                                           n[idx] = { ...n[idx], interactions: updatedInts };
                                           update({...d, scenes: n, videoUrl: undefined, interactions: undefined});
                                       })}
-                                      {intr.type === 'Sant/Usant' && renderTrueFalse(intr.data, nd => {
+                                      {intr.type === 'Sant/usant' && renderTrueFalse(intr.data, nd => {
                                           const n = [...scenes]; 
                                           const updatedInts = [...n[idx].interactions];
                                           updatedInts[intIdx] = { ...updatedInts[intIdx], data: nd };
@@ -441,7 +441,7 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
                           )} />
                           <button onClick={() => {
                               const n = [...scenes];
-                              n[idx] = { ...n[idx], interactions: [...(n[idx].interactions||[]), {id: Date.now(), time: 0, type: 'Flervalg', data: getDefaultData('Flervalg')}] };
+                              n[idx] = { ...n[idx], interactions: [...(n[idx].interactions||[]), {id: Date.now(), time: 0, type: 'Fleirval', data: getDefaultData('Fleirval')}] };
                               update({...d, scenes: n, videoUrl: undefined, interactions: undefined});
                           }} className="w-full mt-8 py-6 border-4 border-dashed border-cyan-200 bg-cyan-50/50 text-cyan-700 rounded-3xl hover:bg-cyan-100 hover:border-cyan-300 transition-all flex items-center justify-center gap-3 font-bold text-2xl"><Plus size={32}/> Legg til interaksjon</button>
                       </div>
@@ -843,12 +843,12 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
 
   const renderMixed = (d: any, update: (d: any) => void) => {
       const options = [
-        { label: 'Flervalg', icon: CircleCheck, color: 'bg-cyan-600' },
-        { label: 'Sant/Usant', icon: CircleHelp, color: 'bg-teal-600' },
-        { label: 'Dra og Slipp', icon: MousePointer2, color: 'bg-amber-600' },
+        { label: 'Fleirval', icon: CircleCheck, color: 'bg-cyan-600' },
+        { label: 'Sant/usant', icon: CircleHelp, color: 'bg-teal-600' },
+        { label: 'Dra og slepp', icon: MousePointer2, color: 'bg-amber-600' },
         { label: 'Tidslinje', icon: CalendarClock, color: 'bg-indigo-600' },
-        { label: 'Bilde Hotspot', icon: MapPin, color: 'bg-rose-500' },
-        { label: 'Interaktiv Video', icon: Video, color: 'bg-red-600' },
+        { label: 'Bilete-hotspot', icon: MapPin, color: 'bg-rose-500' },
+        { label: 'Interaktiv video', icon: Video, color: 'bg-red-600' },
         { label: 'Minnespel', icon: Grid, color: 'bg-pink-600' },
         { label: 'Fyll inn', icon: Type, color: 'bg-slate-600' },
       ];
@@ -857,13 +857,13 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
       <div className="space-y-12">
           <SortableList items={d.items || []} listKey="mixed" onUpdate={n => update({...d, items: n})} onRemove={id => update({...d, items: d.items.filter((i: any)=>i.id!==id)})} labelFn={i => i.type} renderContent={(item, idx) => (
                 <div className="pt-4">
-                    {item.type === 'Flervalg' && renderFlervalg(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
-                    {item.type === 'Bilde Hotspot' && renderHotspot(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
-                    {item.type === 'Interaktiv Video' && renderVideo(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
+                    {item.type === 'Fleirval' && renderFlervalg(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
+                    {item.type === 'Bilete-hotspot' && renderHotspot(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
+                    {item.type === 'Interaktiv video' && renderVideo(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
                     {item.type === 'Tidslinje' && renderTimeline(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
-                    {item.type === 'Dra og Slipp' && renderDragDrop(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
+                    {item.type === 'Dra og slepp' && renderDragDrop(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
                     {item.type === 'Minnespel' && renderMemory(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
-                    {item.type === 'Sant/Usant' && renderTrueFalse(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
+                    {item.type === 'Sant/usant' && renderTrueFalse(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
                     {item.type === 'Fyll inn' && renderCloze(item.data, nd => {const n = [...d.items]; n[idx] = { ...n[idx], data: nd }; update({...d, items: n})})}
                 </div>
           )} />
@@ -890,33 +890,33 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
       
       <div className="bg-white px-8 py-6 rounded-[2.5rem] border border-slate-200 shadow-sm">
         <div className="mb-4">
-           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full text-3xl font-bold text-slate-800 placeholder-cyan-600/70 border-b-2 border-slate-100 focus:border-cyan-500 outline-none pb-1 bg-transparent transition-colors" placeholder="Gi aktiviteten et navn..." />
+           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full text-3xl font-bold text-slate-800 placeholder-cyan-600/70 border-b-2 border-slate-100 focus:border-cyan-500 outline-none pb-1 bg-transparent transition-colors" placeholder="Gje aktiviteten eit namn..." />
         </div>
         <div>
-           <label className={labelClass}>Beskrivelse (Valgfritt)</label>
-           <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={`${inputClass} resize-none`} rows={3} placeholder="Kort om hva studentene skal lære..." />
+           <label className={labelClass}>Skildring (Valfritt)</label>
+           <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={`${inputClass} resize-none`} rows={3} placeholder="Kort om kva studentane skal lære..." />
         </div>
       </div>
       
       <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm px-8 py-6 min-h-[600px]">
         <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-             <h2 className="text-3xl font-bold text-slate-800">Innhold</h2>
+             <h2 className="text-3xl font-bold text-slate-800">Innhald</h2>
              <span className="text-base font-bold text-white bg-slate-400 px-6 py-2 rounded-full uppercase tracking-wider">{activity.type}</span>
         </div>
-        {activity.type === 'Flervalg' && renderFlervalg(data, setData)}
-        {activity.type === 'Sant/Usant' && renderTrueFalse(data, setData)}
+        {activity.type === 'Fleirval' && renderFlervalg(data, setData)}
+        {activity.type === 'Sant/usant' && renderTrueFalse(data, setData)}
         {activity.type === 'Fyll inn' && renderCloze(data, setData)}
-        {activity.type === 'Bilde Hotspot' && renderHotspot(data, setData)}
-        {activity.type === 'Interaktiv Video' && renderVideo(data, setData)}
+        {activity.type === 'Bilete-hotspot' && renderHotspot(data, setData)}
+        {activity.type === 'Interaktiv video' && renderVideo(data, setData)}
         {activity.type === 'Tidslinje' && renderTimeline(data, setData)}
-        {activity.type === 'Dra og Slipp' && renderDragDrop(data, setData)}
+        {activity.type === 'Dra og slepp' && renderDragDrop(data, setData)}
         {activity.type === 'Minnespel' && renderMemory(data, setData)}
         {activity.type === 'Fleire saman' && renderMixed(data, setData)}
       </div>
 
       <div className="flex flex-col gap-4 bg-white px-8 py-6 rounded-[2.5rem] border border-slate-200 shadow-sm">
         <button onClick={() => { handleSave(false); onPreview(); }} className="w-full py-5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl font-bold flex items-center justify-center gap-3 transition-colors text-xl"><Eye size={28} /> Førehandsvising</button>
-        <button onClick={() => handleSave(true)} className="w-full py-5 bg-cyan-700 hover:bg-cyan-800 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-md shadow-cyan-100 text-xl">{saved ? <CircleCheck size={28} /> : <Save size={28} />} {saved ? 'Lagra!' : 'Lagre'}</button>
+        <button onClick={() => handleSave(true)} className="w-full py-5 bg-cyan-700 hover:bg-cyan-800 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-md shadow-cyan-100 text-xl">{saved ? <CircleCheck size={28} /> : <Save size={28} />} {saved ? 'Lagra!' : 'Lagra'}</button>
       </div>
 
     </div>

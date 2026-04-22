@@ -12,7 +12,7 @@ export const HelpPage = () => {
       shadow: 'shadow-cyan-200',
       icon: <Target className="w-8 h-8 text-white" />,
       items: [
-        { name: 'Fleirval & Sant/Usant', desc: 'Bruk desse som "inngangsbillett" før synkron undervisning for å aktivere forkunnskapar, eller som repetisjon rett etterpå.' },
+        { name: 'Fleirval & Sant/usant', desc: 'Bruk desse som "inngangsbillett" før synkron undervisning for å aktivere forkunnskapar, eller som repetisjon rett etterpå.' },
         { name: 'Minnespel', desc: 'Ypparleg for å drille terminologi. Kople fagomgrep med definisjon eller bilete.' }
       ]
     },

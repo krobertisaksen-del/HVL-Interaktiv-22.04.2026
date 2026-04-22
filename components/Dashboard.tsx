@@ -22,12 +22,12 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ activities, onCreate, onEdit, onPlay, onDelete, onDuplicate, onExport, onImport, isDeepLinking = false, onSelect }) => {
   const types = [
-    { label: 'Flervalg', icon: CircleCheck, color: 'bg-cyan-600' },
-    { label: 'Sant/Usant', icon: CircleHelp, color: 'bg-teal-600' },
-    { label: 'Dra og Slipp', icon: MousePointer2, color: 'bg-amber-600' },
+    { label: 'Fleirval', icon: CircleCheck, color: 'bg-cyan-600' },
+    { label: 'Sant/usant', icon: CircleHelp, color: 'bg-teal-600' },
+    { label: 'Dra og slepp', icon: MousePointer2, color: 'bg-amber-600' },
     { label: 'Tidslinje', icon: CalendarClock, color: 'bg-indigo-600' },
-    { label: 'Bilde Hotspot', icon: MapPin, color: 'bg-rose-500' },
-    { label: 'Interaktiv Video', icon: Video, color: 'bg-red-600' },
+    { label: 'Bilete-hotspot', icon: MapPin, color: 'bg-rose-500' },
+    { label: 'Interaktiv video', icon: Video, color: 'bg-red-600' },
     { label: 'Minnespel', icon: Grid, color: 'bg-pink-600' },
     { label: 'Fyll inn', icon: Type, color: 'bg-slate-600' },
     { label: 'Fleire saman', icon: Layers, color: 'bg-[linear-gradient(to_bottom_right,#0ea5e9_25%,#10b981_25%,#10b981_50%,#8b5cf6_50%,#8b5cf6_75%,#f43f5e_75%)]' },
@@ -43,7 +43,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ activities, onCreate, onEd
                   <div className="bg-white/20 p-4 rounded-2xl"><Plus size={32} aria-hidden="true"/></div>
                   <div>
                       <h2 className="text-3xl font-bold">Legg til i Canvas</h2>
-                      <p className="text-blue-100 text-xl">Velg aktiviteten du vil sette inn, eller lag en ny.</p>
+                      <p className="text-blue-100 text-xl">Vel aktiviteten du vil setje inn, eller lag ein ny.</p>
                   </div>
               </div>
           </div>
@@ -93,7 +93,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ activities, onCreate, onEd
                     {a.type.charAt(0)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className={`font-bold text-3xl mb-2 truncate group-hover:text-cyan-900 ${!a.title ? 'text-slate-400 italic' : 'text-slate-900'}`}>{a.title || 'Uten tittel'}</h3>
+                    <h3 className={`font-bold text-3xl mb-2 truncate group-hover:text-cyan-900 ${!a.title ? 'text-slate-400 italic' : 'text-slate-900'}`}>{a.title || 'Utan tittel'}</h3>
                     <div className="flex flex-wrap items-center gap-4 text-lg text-slate-600">
                       <span className="bg-slate-100 px-4 py-1.5 rounded-lg text-slate-700 font-bold text-sm uppercase tracking-wide border border-slate-200">{a.type}</span>
                       <span>{new Date(a.createdAt).toLocaleDateString()}</span>
@@ -104,11 +104,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ activities, onCreate, onEd
               <nav className="flex items-center gap-3 self-end sm:self-auto pl-4" aria-label={`Handlinger for ${a.title}`}>
                   {isDeepLinking && onSelect ? (
                       <button onClick={() => onSelect(a)} className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl transition-colors font-bold text-xl shadow-lg shadow-blue-200 flex items-center gap-2">
-                          <Plus size={24} aria-hidden="true"/> Velg
+                          <Plus size={24} aria-hidden="true"/> Vel
                       </button>
                   ) : (
                       <>
-                        <button onClick={() => onPlay(a)} className="p-5 text-slate-500 hover:text-cyan-600 hover:bg-cyan-50 rounded-2xl transition-colors" title="Spill" aria-label={`Spill ${a.title}`}>
+                        <button onClick={() => onPlay(a)} className="p-5 text-slate-500 hover:text-cyan-600 hover:bg-cyan-50 rounded-2xl transition-colors" title="Spel" aria-label={`Spel ${a.title}`}>
                             <Play size={32} aria-hidden="true"/>
                         </button>
                         <button onClick={() => onEdit(a)} className="p-5 text-slate-500 hover:text-cyan-600 hover:bg-cyan-50 rounded-2xl transition-colors" title="Rediger" aria-label={`Rediger ${a.title}`}>
