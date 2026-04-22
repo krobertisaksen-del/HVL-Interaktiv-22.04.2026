@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+:root {
+  --hc-bg: #f8fafc;
+  --hc-surface: #ffffff;
+  --hc-text: #0f172a;
+  --hc-primary: #0e7490; /* cyan-700 */
+  --hc-border: #e2e8f0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--hc-bg);
+  color: var(--hc-text);
+}
+
+/* 
+   Strict Black & White Mode 
+   Focused on readability and structure without "blacking out" the page.
+*/
+html.high-contrast-mode {
+  --hc-bg: #ffffff;
+  --hc-surface: #ffffff;
+  --hc-text: #000000;
+  --hc-primary: #000000;
+  --hc-border: #000000;
+}
+
+html.high-contrast-mode body {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Universal Cleanup */
+html.high-contrast-mode *,
+html.high-contrast-mode *::before,
+html.high-contrast-mode *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  border-color: #000000 !important;
+}
+
+/* All text to Black by default */
+html.high-contrast-mode h1,
+html.high-contrast-mode h2,
+html.high-contrast-mode h3,
+html.high-contrast-mode h4,
+html.high-contrast-mode h5,
+html.high-contrast-mode p,
+html.high-contrast-mode span,
+html.high-contrast-mode label,
+html.high-contrast-mode input,
+html.high-contrast-mode textarea,
+html.high-contrast-mode li {
+  color: #000000 !important;
+}
+
+/* Force list markers (1. 2. 3.) to be black */
+html.high-contrast-mode li::marker {
+  color: #000000 !important;
+  font-weight: bold !important;
+}
+
+/* Page Backgrounds should be WHITE */
+html.high-contrast-mode [class*="bg-"],
+html.high-contrast-mode main,
+html.high-contrast-mode section,
+html.high-contrast-mode article,
+html.high-contrast-mode .bg-white,
+html.high-contrast-mode .bg-slate-50,
+html.high-contrast-mode .bg-slate-100 {
+  background-color: #ffffff !important;
+}
+
+/* 
+   FORCED BLACK ELEMENTS (UI Controls & Section Headers) 
+   These remain black to provide the structure.
+*/
+html.high-contrast-mode button.bg-cyan-700,
+html.high-contrast-mode button.bg-slate-800,
+html.high-contrast-mode .bg-black,
+html.high-contrast-mode .group div[class*="bg-"], /* Dashboard icon circles */
+html.high-contrast-mode header.bg-slate-800,   /* Main Player/Editor header */
+html.high-contrast-mode div[class*="bg-"][class*="-700"], /* Dark section headers */
+html.high-contrast-mode div[class*="bg-"][class*="-800"],
+html.high-contrast-mode div[class*="bg-"][class*="-600"],
+html.high-contrast-mode section.bg-slate-800 { /* The Canvas Menu guide box */
+  background-color: #000000 !important;
+}
+
+/* Text and Icons inside the Black containers must be WHITE */
+html.high-contrast-mode .bg-black *,
+html.high-contrast-mode .bg-slate-800 *,
+html.high-contrast-mode .bg-cyan-700 *,
+html.high-contrast-mode [class*="bg-"][class*="-700"] *,
+html.high-contrast-mode [class*="bg-"][class*="-800"] *,
+html.high-contrast-mode [class*="bg-"][class*="-600"] *,
+html.high-contrast-mode section.bg-slate-800 *,
+html.high-contrast-mode .group div[class*="bg-"] svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Special fix for list markers inside black boxes */
+html.high-contrast-mode section.bg-slate-800 li::marker {
+  color: #ffffff !important;
+}
+
+/* 
+   SVG ICON HANDLING
+*/
+html.high-contrast-mode svg {
+  stroke: #000000 !important;
+  stroke-width: 2.5px !important;
+  fill: none !important;
+}
+
+html.high-contrast-mode svg * {
+  stroke: inherit !important;
+  fill: none !important;
+}
+
+/* Exceptions for icons in black boxes */
+html.high-contrast-mode .bg-black svg,
+html.high-contrast-mode .bg-slate-800 svg,
+html.high-contrast-mode .bg-cyan-700 svg,
+html.high-contrast-mode [class*="bg-"][class*="-700"] svg,
+html.high-contrast-mode section.bg-slate-800 svg,
+html.high-contrast-mode .group div svg {
+  stroke: #ffffff !important;
+}
+
+/* BORDER REINFORCEMENT 
+   Essential for definition on white-on-white layouts.
+*/
+html.high-contrast-mode article,
+html.high-contrast-mode button,
+html.high-contrast-mode input,
+html.high-contrast-mode textarea,
+html.high-contrast-mode .border,
+html.high-contrast-mode [class*="rounded-"],
+html.high-contrast-mode .bg-yellow-50, /* Pedagogiske gullkorn boxes */
+html.high-contrast-mode .bg-green-50 {
+  border: 3px solid #000000 !important;
+}
+
+/* Visual Media grayscale */
+html.high-contrast-mode img,
+html.high-contrast-mode video {
+  filter: grayscale(100%) contrast(1.5) !important;
+}
+
+/* Focus states */
+html.high-contrast-mode *:focus-visible {
+  outline: 4px solid #000000 !important;
+  outline-offset: 2px !important;
+}
