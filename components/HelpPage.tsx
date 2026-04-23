@@ -233,7 +233,7 @@ export const HelpPage = () => {
                       Krav om meistring
                   </h4>
                   <p className="text-slate-700 text-2xl leading-relaxed font-medium">
-                      Aktivitetane krev at studenten får alt riktig for å fullføre. Fordi dei ikkje berre kan klikke seg gjennom, bør du halde aktivitetane korte og fokusere strengt på kjernekonsepta. Ein for lang test med meistringskrav skapar fort frustrasjon, medan små, overkomelege oppgåver bygger sjølvtillit og sikrar djup refleksjon.
+                      Aktivitetane krev at studenten får alt riktig for å fullføre. Ein for lang test med meistringskrav skapar fort frustrasjon, medan små, overkomelege oppgåver bygger sjølvtillit og sikrar djup refleksjon.
                   </p>
                 </div>
             </div>
