@@ -110,12 +110,12 @@ export const HelpPage = () => {
               
               <div className="p-8 space-y-8 bg-slate-50 min-h-[300px] flex-1">
                 {section.items.map((item) => (
-                  <div key={item.name} className="transform opacity-100 transition-all duration-500 delay-100">
-                    <h5 className="font-bold text-slate-900 mb-3 text-2xl flex items-center gap-2">
-                       <ChevronRight className={`w-6 h-6 flex-shrink-0 ${section.color.replace('bg-', 'text-')} transition-all`} />
+                  <div key={item.name} className="transform opacity-100 transition-all duration-300 group/item hover:translate-x-2">
+                    <h5 className="font-bold text-slate-900 mb-3 text-2xl flex items-center gap-2 group-hover:text-cyan-900 transition-colors">
+                       <ChevronRight className={`w-6 h-6 flex-shrink-0 ${section.color.replace('bg-', 'text-')} transition-all duration-300 group-hover:scale-125 group-hover:translate-x-1 group-[&:hover]/item:translate-x-2`} />
                        {item.name}
                     </h5>
-                    <p className="text-slate-600 text-xl leading-relaxed font-medium pl-8">{item.desc}</p>
+                    <p className="text-slate-600 text-xl leading-relaxed font-medium pl-8 group-hover:text-slate-800 transition-colors">{item.desc}</p>
                   </div>
                 ))}
               </div>
