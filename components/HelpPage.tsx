@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lightbulb, Clock, Target, Layers, Puzzle, CircleAlert, CircleCheck, Pencil, Eye, Download, ArrowRight, Link as LinkIcon, Layout, ChevronRight, MousePointerClick, BookOpen, GraduationCap, MonitorPlay } from 'lucide-react';
+import { Lightbulb, Clock, Target, Layers, Puzzle, CircleAlert, CircleCheck, Pencil, Eye, Download, ArrowRight, Link as LinkIcon, Layout, ChevronRight, MousePointerClick, BookOpen, GraduationCap, MonitorPlay, LineChart, Route } from 'lucide-react';
 
 export const HelpPage = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export const HelpPage = () => {
       description: 'Hjelper studenten å forstå rekkjefølgje og relasjonar.',
       color: 'bg-indigo-600',
       shadow: 'shadow-indigo-200',
-      icon: <Layers className="w-8 h-8 text-white" />,
+      icon: <Route className="w-8 h-8 text-white" />,
       items: [
         { name: 'Tidslinje', desc: 'Vis utvikling over tid, historiske hendingar eller steg i ein prosess.' },
         { name: 'Dra og Slepp', desc: 'Tvingar studenten til å kategorisere informasjon. Pedagogisk tips: Be studenten sortere årsak og verknad, eller plasser element i rett kontekst.' }
@@ -57,10 +57,7 @@ export const HelpPage = () => {
             <Lightbulb className="text-white w-16 h-16 group-hover:animate-pulse" />
           </div>
         </div>
-        <h2 className="text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-cyan-900 to-slate-900 mb-8 tracking-tight">Engasjerande Asynkron Læring</h2>
-        <p className="text-3xl text-slate-600 leading-relaxed font-medium max-w-4xl mx-auto">
-          Målet er at digital undervising utanom sanntid skal vere engasjerande, og at formativ vurdering skal vere ein naturleg del av kvardagen til studenten.
-        </p>
+        <h2 className="text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-cyan-900 to-slate-900 tracking-tight">Engasjerande Asynkron Læring</h2>
       </section>
 
       {/* DEFINITIONS (Interactive Cards) */}
@@ -77,7 +74,7 @@ export const HelpPage = () => {
         <div className="group bg-white p-12 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-2xl hover:shadow-indigo-100 hover:-translate-y-2 transition-all duration-500 cursor-default">
           <div className="flex items-center gap-6 mb-6">
             <div className="w-20 h-20 shrink-0 bg-indigo-50 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-500">
-               <Target className="w-10 h-10 text-indigo-600"/>
+               <LineChart className="w-10 h-10 text-indigo-600"/>
             </div>
             <h3 className="font-bold text-slate-900 text-3xl md:text-4xl group-hover:text-indigo-700 transition-colors">Formativ vurdering</h3>
           </div>
@@ -86,7 +83,7 @@ export const HelpPage = () => {
       </section>
 
       {/* INTERACTIVE TOOLBOX */}
-      <section className="max-w-7xl mx-auto px-4">
+      <section className="max-w-7xl mx-auto px-4 pt-12">
         <div className="text-center mb-16">
           <h3 className="text-5xl font-extrabold text-slate-900 mb-6">Verktøykassa</h3>
         </div>
