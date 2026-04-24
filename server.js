@@ -7,6 +7,7 @@ import Database from 'ltijs-sequelize';
 import { DataTypes } from 'sequelize';
 import { Issuer, custom } from 'openid-client';
 import session from 'express-session';
+import multer from 'multer';
 import express from 'express';
 import ConnectSessionSequelize from 'connect-session-sequelize';
 import { createServer as createViteServer } from 'vite';
@@ -212,6 +213,39 @@ setupFeide();
 lti.app.enable('trust proxy');
 
 // 3. DEFINE ROUTES
+
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir)
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, uniqueSuffix + path.extname(file.originalname))
+  }
+});
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit overall, client side enforces 50mb video / 5mb img
+});
+
+lti.app.use('/uploads', express.static(uploadDir));
+
+lti.app.post('/api/upload', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    return res.json({ url: `/uploads/${req.file.filename}` });
+  } catch(error) {
+    console.error('Error uploading file:', error);
+    return res.status(500).json({ error: 'File upload failed' });
+  }
+});
 
 // Health Check
 lti.app.get('/health', (req, res) => {

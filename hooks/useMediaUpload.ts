@@ -3,7 +3,7 @@ import { useState } from 'react';
 export const useMediaUpload = () => {
   const [loading, setLoading] = useState(false);
 
-  const upload = (file: File | null, callback: (result: string) => void, type: 'image' | 'video' = 'image') => {
+  const upload = async (file: File | null, callback: (result: string) => void, type: 'image' | 'video' = 'image') => {
     if (!file) return;
     setLoading(true);
     
@@ -15,18 +15,27 @@ export const useMediaUpload = () => {
       return; 
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') {
-        callback(reader.result);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
       }
-      setLoading(false);
-    };
-    reader.onerror = () => {
-      setLoading(false);
+      
+      const data = await response.json();
+      callback(data.url);
+    } catch (error) {
+      console.error(error);
       alert("Feil ved opplasting.");
-    };
-    reader.readAsDataURL(file);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return { upload, loading };
