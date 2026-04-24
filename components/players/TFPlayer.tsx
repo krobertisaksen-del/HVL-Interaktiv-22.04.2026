@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { CircleCheck, X, RotateCw } from 'lucide-react';
 import { CompletionScreen } from '../ui/CompletionScreen';
-import { PlayerProps } from '../../types';
+import { PlayerProps, TFQuestion } from '../../types';
 
 export const TFPlayer: React.FC<PlayerProps> = ({ data, onSuccess, compact = false }) => {
-  const questions = data.questions || [{ id: 1, question: data.question, isTrue: data.isTrue }];
+  const questions = data.questions || [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<boolean | null>(null);
   const [checked, setChecked] = useState(false);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [mistakes, setMistakes] = useState<any[]>([]);
-  const currentQ = questions[currentIndex];
+  const currentQ = questions[currentIndex] as TFQuestion;
 
   const [hasContinued, setHasContinued] = useState(false);
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { CircleCheck, X, RotateCw } from 'lucide-react';
 import { CompletionScreen } from '../ui/CompletionScreen';
-import { PlayerProps } from '../../types';
+import { PlayerProps, MCQuestion, Option } from '../../types';
 
 export const MCPlayer: React.FC<PlayerProps> = ({ data, onSuccess, compact = false }) => {
-  const questions = data.questions || [{ id: 1, question: data.question, options: data.options }];
+  const questions = data.questions || [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
@@ -12,13 +12,13 @@ export const MCPlayer: React.FC<PlayerProps> = ({ data, onSuccess, compact = fal
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [mistakes, setMistakes] = useState<any[]>([]);
-  const currentQ = questions[currentIndex];
+  const currentQ = questions[currentIndex] as MCQuestion;
 
   const [hasContinued, setHasContinued] = useState(false);
 
   const check = () => {
     if (!selected) return;
-    const correctOpt = currentQ.options.find((o: any) => o.correct);
+    const correctOpt = currentQ.options.find((o: Option) => o.correct);
     const isCorrect = correctOpt && correctOpt.id === selected;
     setFeedback(isCorrect);
     if (isCorrect) setScore(s => s + 1);
@@ -63,8 +63,8 @@ export const MCPlayer: React.FC<PlayerProps> = ({ data, onSuccess, compact = fal
       <div className={`w-full ${compact ? 'h-2' : 'h-3'} bg-slate-100 rounded-full overflow-hidden`}><div className="h-full bg-cyan-500 transition-all duration-500" style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}></div></div>
       <h3 className={`${compact ? 'text-xl py-2' : 'text-2xl py-4'} font-bold text-slate-800 text-center`}>{currentQ.question}</h3>
       <div className={`grid ${compact ? 'gap-2' : 'gap-4'}`}>
-        {currentQ.options.map((o: any) => (
-          <button key={o.id} onClick={() => !checked && setSelected(o.id)} disabled={checked} className={`${compact ? 'p-3' : 'p-5'} rounded-xl border-2 text-left transition-all relative ${checked ? (o.correct ? 'bg-green-100 border-green-500' : (selected===o.id ? 'bg-red-100 border-red-500' : 'opacity-50')) : (selected===o.id ? 'bg-cyan-50 border-cyan-600' : 'hover:bg-slate-50')}`}>
+        {currentQ.options.map((o: Option) => (
+          <button key={o.id} onClick={() => !checked && setSelected(Number(o.id))} disabled={checked} className={`${compact ? 'p-3' : 'p-5'} rounded-xl border-2 text-left transition-all relative ${checked ? (o.correct ? 'bg-green-100 border-green-500' : (selected===o.id ? 'bg-red-100 border-red-500' : 'opacity-50')) : (selected===o.id ? 'bg-cyan-50 border-cyan-600' : 'hover:bg-slate-50')}`}>
             <span className="font-bold">{o.text}</span>
             {checked && o.correct && <CircleCheck className="absolute right-4 top-4 text-green-600" size={20}/>}
             {checked && !o.correct && selected===o.id && <X className="absolute right-4 top-4 text-red-600" size={20}/>}

@@ -1,13 +1,13 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { CheckCircle2, X, RotateCw, Plus, ChevronRight } from 'lucide-react';
 import { CompletionScreen } from '../ui/CompletionScreen';
-import { PlayerProps } from '../../types';
+import { PlayerProps, Interaction } from '../../types';
 import { MCPlayer } from './MCPlayer';
 import { TFPlayer } from './TFPlayer';
 import { ClozePlayer } from './ClozePlayer';
 
 export const VideoPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
-  const scenes = useMemo(() => data.scenes || (data.videoUrl ? [{id: 'legacy', videoUrl: data.videoUrl, interactions: data.interactions}] : []), [data]);
+  const scenes = useMemo(() => data.scenes || [], [data]);
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [finished, setFinished] = useState(false);
@@ -16,7 +16,7 @@ export const VideoPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
   const [sceneResults, setSceneResults] = useState<Record<string, any>>({}); 
   
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [activeInteraction, setActiveInteraction] = useState<any>(null);
+  const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
   const [showHotspotContent, setShowHotspotContent] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
@@ -32,8 +32,8 @@ export const VideoPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
   const handleTimeUpdate = () => {
     if (!videoRef.current || activeInteraction) return;
     const currentTime = Math.floor(videoRef.current.currentTime);
-    const interaction = (currentScene.interactions || []).find((i: any) => 
-        parseInt(i.time) === currentTime && !completedInteractions.includes(i.id)
+    const interaction = (currentScene.interactions || []).find((i: Interaction) => 
+        parseInt(i.time as string) === currentTime && !completedInteractions.includes(i.id)
     );
     if (interaction) {
         videoRef.current.pause();

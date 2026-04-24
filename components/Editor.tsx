@@ -20,12 +20,43 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
   const [description, setDescription] = useState(activity.description || '');
   const [data, setData] = useState(activity.data);
   const [saved, setSaved] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const [placingId, setPlacingId] = useState<number | string | null>(null);
   const { upload, loading } = useMediaUpload();
+
+  const DRAFT_KEY = `hvl_draft_${activity.id}`;
+
+  // Restore draft on mount if available
+  React.useEffect(() => {
+    const draftContent = localStorage.getItem(DRAFT_KEY);
+    if (draftContent) {
+      try {
+        const parsed = JSON.parse(draftContent);
+        setTitle(parsed.title || '');
+        setDescription(parsed.description || '');
+        if (parsed.data) setData(parsed.data);
+      } catch (e) {
+        console.error("Could not parse draft:", e);
+      }
+    }
+  }, [activity.id]); // Only run when component mounts or activity.id changes
+
+  // Auto-save to localStorage on changes
+  React.useEffect(() => {
+    setAutoSaveStatus('saving');
+    const timer = setTimeout(() => {
+      const draft = { title, description, data };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      setAutoSaveStatus('saved');
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [title, description, data, activity.id]);
   
   const handleSave = (shouldClose: boolean = false) => {
     onSave({ ...activity, title, description, data });
+    localStorage.removeItem(DRAFT_KEY); // Clear draft after official save
     setSaved(true);
     setTimeout(() => {
         setSaved(false);
@@ -41,17 +72,11 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
       
       // Update interaction with this placingId
       if (activity.type === 'Interaktiv Video') {
-          if (data.scenes) {
-              const newScenes = data.scenes.map((scene: any) => ({
-                  ...scene,
-                  interactions: scene.interactions.map((i: any) => i.id === placingId ? { ...i, x, y } : i)
-              }));
-              setData({ ...data, scenes: newScenes });
-          } else {
-              // Legacy flat structure
-              const nInt = data.interactions.map((i: any) => i.id === placingId ? { ...i, x, y } : i);
-              setData({ ...data, interactions: nInt });
-          }
+          const newScenes = (data.scenes || []).map((scene: any) => ({
+              ...scene,
+              interactions: scene.interactions.map((i: any) => i.id === placingId ? { ...i, x, y } : i)
+          }));
+          setData({ ...data, scenes: newScenes });
       }
       setPlacingId(null);
   };
@@ -131,8 +156,7 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
   );
 
   const renderHotspot = (d: any, update: (d: any) => void) => {
-    // Migration for existing single image format
-    const scenes = d.scenes || (d.imageUrl ? [{id: 'legacy', imageUrl: d.imageUrl, altText: d.altText, hotspots: d.hotspots}] : []);
+    const scenes = d.scenes || [];
 
     return (
       <div className="space-y-10">
@@ -264,7 +288,7 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
   };
 
   const renderVideo = (d: any, update: (d: any) => void) => {
-    const scenes = d.scenes || (d.videoUrl ? [{id: 'legacy', videoUrl: d.videoUrl, interactions: d.interactions}] : []);
+    const scenes = d.scenes || [];
     return (
       <div className="space-y-10">
           <SortableList 
@@ -519,7 +543,7 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
   );
 
   const renderDragDrop = (d: any, update: (d: any) => void) => {
-    const tasks = d.tasks || (d.backgroundUrl ? [{id: 'legacy', backgroundUrl: d.backgroundUrl, altText: d.altText, items: d.items, zones: d.zones}] : []);
+    const tasks = d.tasks || [];
     
     return (
       <div className="space-y-10">
@@ -743,7 +767,7 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
   );
 
   const renderTrueFalse = (d: any, update: (d: any) => void) => {
-      const questions = d.questions || (d.question ? [{id: 'legacy', question: d.question, isTrue: d.isTrue}] : []);
+      const questions = d.questions || [];
 
       return (
           <div className="space-y-10">
@@ -801,7 +825,7 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
   };
 
   const renderCloze = (d: any, update: (d: any) => void) => {
-      const blocks = d.blocks || (d.text ? [{id: 'legacy', text: d.text}] : []);
+      const blocks = d.blocks || [];
 
       return (
           <div className="space-y-8">
@@ -889,8 +913,12 @@ export const Editor: React.FC<EditorProps> = ({ activity, onSave, onPreview, onC
     <div className="max-w-5xl mx-auto space-y-6 animate-in slide-in-from-bottom-8 duration-500 pb-20">
       
       <div className="bg-white px-8 py-6 rounded-[2.5rem] border border-slate-200 shadow-sm">
-        <div className="mb-4">
+        <div className="flex justify-between items-start mb-4">
            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full text-3xl font-bold text-slate-800 placeholder-cyan-600/70 border-b-2 border-slate-100 focus:border-cyan-500 outline-none pb-1 bg-transparent transition-colors" placeholder="Gje aktiviteten eit namn..." />
+           <div className="text-sm font-medium flex items-center justify-end min-w-[180px] pl-4">
+              {autoSaveStatus === 'saving' && <span className="flex items-center gap-2 text-slate-400"><Loader2 size={16} className="animate-spin"/> Kladdr...</span>}
+              {autoSaveStatus === 'saved' && <span className="flex items-center gap-2 text-slate-400"><CircleCheck size={16}/> Kladd lagra lokalt</span>}
+           </div>
         </div>
         <div>
            <label className={labelClass}>Skildring (Valfritt)</label>

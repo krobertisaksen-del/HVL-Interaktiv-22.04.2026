@@ -83,7 +83,7 @@ export const HelpPage = () => {
       </section>
 
       {/* INTERACTIVE TOOLBOX */}
-      <section className="max-w-7xl mx-auto px-4 pt-12">
+      <section className="max-w-7xl mx-auto px-4 pt-24 mt-12">
         <div className="text-center mb-16">
           <h3 className="text-5xl font-extrabold text-slate-900 mb-6">Verktøykassa</h3>
         </div>

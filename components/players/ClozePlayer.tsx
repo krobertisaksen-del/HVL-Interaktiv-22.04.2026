@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { CircleCheck, X, RotateCw } from 'lucide-react';
 import { CompletionScreen } from '../ui/CompletionScreen';
-import { PlayerProps } from '../../types';
+import { PlayerProps, ClozeBlock } from '../../types';
 
 export const ClozePlayer: React.FC<PlayerProps> = ({ data, onSuccess, compact = false }) => {
-  const blocks = data.blocks || [{ id: 1, text: data.text }];
+  const blocks = data.blocks || [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [inputs, setInputs] = useState<string[]>([]);
   const [checked, setChecked] = useState(false);
@@ -12,7 +12,7 @@ export const ClozePlayer: React.FC<PlayerProps> = ({ data, onSuccess, compact = 
   const [finished, setFinished] = useState(false);
   const [mistakes, setMistakes] = useState<any[]>([]);
   
-  const currentBlock = blocks[currentIndex];
+  const currentBlock = blocks[currentIndex] as ClozeBlock;
 
   // Parse text into parts: "Hello *world*" -> ["Hello ", "world", ""]
   const parts = currentBlock.text.split('*');

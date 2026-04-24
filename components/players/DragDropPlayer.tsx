@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { CheckCircle2, X, ChevronRight, Upload, AlertCircle } from 'lucide-react';
 import { CompletionScreen } from '../ui/CompletionScreen';
-import { PlayerProps } from '../../types';
+import { PlayerProps, DragItem, DragZone } from '../../types';
 
 const SafeImage = ({ src, alt, className, style, draggable = true }: { src: string; alt?: string; className?: string; style?: React.CSSProperties, draggable?: boolean }) => {
   const [error, setError] = useState(false);
@@ -18,13 +18,13 @@ const SafeImage = ({ src, alt, className, style, draggable = true }: { src: stri
 };
 
 export const DragDropPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
-  const tasks = useMemo(() => data.tasks || (data.backgroundUrl ? [{id: 'legacy', backgroundUrl: data.backgroundUrl, altText: data.altText, items: data.items, zones: data.zones}] : []), [data]);
+  const tasks = useMemo(() => data.tasks || [], [data]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [finished, setFinished] = useState(false);
   const [hasContinued, setHasContinued] = useState(false);
   
-  const [items, setItems] = useState<any[]>([]);
-  const [activeDrag, setActiveDrag] = useState<any>(null);
+  const [items, setItems] = useState<DragItem[]>([]);
+  const [activeDrag, setActiveDrag] = useState<{id: number | string, offsetX: number, offsetY: number, startX?: number, startY?: number} | null>(null);
   const [feedback, setFeedback] = useState<any>(null);
   const [showResults, setShowResults] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,13 +33,13 @@ export const DragDropPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
 
   useEffect(() => {
     if (currentTask) {
-        setItems(currentTask.items ? currentTask.items.map((i: any) => ({ ...i, x: null, y: null })) : []);
+        setItems(currentTask.items ? currentTask.items.map((i: DragItem) => ({ ...i, x: null, y: null })) : []);
         setFeedback(null);
         setShowResults(false);
     }
   }, [currentTask]);
 
-  const startDragFromBench = (e: React.MouseEvent, item: any) => {
+  const startDragFromBench = (e: React.MouseEvent, item: DragItem) => {
       e.preventDefault();
       if (!containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
@@ -78,7 +78,7 @@ export const DragDropPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
     const results = items.map(item => {
         if (!item.correctZoneId) return { ...item, isCorrect: true };
         if (item.x === null) return { ...item, isCorrect: false };
-        const zone = currentTask.zones.find((z: any) => z.id == item.correctZoneId);
+        const zone = currentTask.zones.find((z: DragZone) => z.id == item.correctZoneId);
         if (!zone) return { ...item, isCorrect: false };
         const cx = item.x + 5; 
         const cy = item.y + 2.5;
@@ -129,13 +129,13 @@ export const DragDropPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
     <div className="space-y-6 select-none" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <div className="flex justify-between items-center border-b border-slate-100 pb-2">
           <h4 className="font-bold text-slate-700">Oppgave {currentIndex + 1} av {tasks.length}</h4>
-          <button onClick={() => { setItems(currentTask.items.map((i: any) => ({...i, x: null, y: null}))); setFeedback(null); setShowResults(false); }} className="text-sm text-slate-500 hover:text-cyan-700 underline">Nullstill</button>
+          <button onClick={() => { setItems(currentTask.items.map((i: DragItem) => ({...i, x: null, y: null}))); setFeedback(null); setShowResults(false); }} className="text-sm text-slate-500 hover:text-cyan-700 underline">Nullstill</button>
       </div>
       
       <div ref={containerRef} className="relative border-2 border-slate-200 rounded-2xl bg-slate-100 min-h-[500px] shadow-inner overflow-hidden">
         <div className="absolute inset-0">
             <SafeImage src={currentTask.backgroundUrl} alt={currentTask.altText || "Bakgrunn"} className="w-full h-full object-cover opacity-90 block pointer-events-none" draggable={false} />
-            {(currentTask.zones || []).map((z: any) => (
+            {(currentTask.zones || []).map((z: DragZone) => (
                 <div key={z.id} style={{ top: `${z.top}%`, left: `${z.left}%`, width: `${z.width || 15}%`, height: `${z.height || 10}%` }} className="absolute border-2 border-dashed border-slate-500/30 bg-white/20 rounded-lg flex items-center justify-center group">
                     <span className="text-[10px] font-bold text-slate-600 uppercase bg-white/80 px-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">{z.label}</span>
                 </div>

@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Hexagon, Layout, BookOpen, Loader2, CircleAlert, PlayCircle, Wrench, RefreshCw, ArrowLeft, CircleCheck, Eye, Moon, Sun } from 'lucide-react';
 import { Activity } from './types';
-import { getDefaultData, PLAYER_SCRIPT_TEMPLATE } from './constants';
+import { getDefaultData } from './constants';
 import { Dashboard } from './components/Dashboard';
 import { HelpPage } from './components/HelpPage';
 import { Editor } from './components/Editor';
 import { Player } from './components/Player';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function HVLInteraktivApp() {
   const [view, setView] = useState<'dashboard' | 'editor' | 'player' | 'help'>('dashboard');
@@ -171,156 +172,6 @@ export default function HVLInteraktivApp() {
         alert("Feil ved valg av aktivitet.");
         setLoading(false);
     }
-  };
-
-  const handleDownloadHTML = (activity: Activity) => {
-    // Sanitize activity data to prevent script injection in the generated HTML
-    const activityJson = JSON.stringify(activity).replace(/<\/script>/gi, "<\\/script>");
-
-    const htmlContent = `
-<!DOCTYPE html>
-<html lang="no">
-<head>
-    <meta charset="UTF-8">
-    <base target="_top">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${activity.title} - HVL Interaktiv</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js" crossorigin></script>
-    <!-- Use latest Lucide for definitions -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Modern Babel Standalone -->
-    <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
-    <style>
-       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-       html { font-size: 18px; }
-       body { font-family: 'Inter', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; height: 100vh; overflow: hidden; }
-       #root { height: 100%; overflow-y: auto; }
-       #error-container { display: none; padding: 20px; background: #fee2e2; color: #991b1b; border: 1px solid #f87171; margin: 20px; border-radius: 8px; font-family: monospace; }
-       
-    </style>
-</head>
-<body>
-    <div id="error-container"></div>
-    <div id="root"></div>
-
-    <script>
-      window.onerror = function(msg, url, line, col, error) {
-        var container = document.getElementById('error-container');
-        container.style.display = 'block';
-        container.innerHTML = '<strong>Error:</strong> ' + msg + '<br/><small>' + (error ? error.stack : '') + '</small>';
-        return false;
-      };
-    </script>
-
-    <script type="text/babel">
-        try {
-            const activity = ${activityJson};
-            const windowData = activity;
-
-            const { useState, useEffect, useRef, useMemo } = React;
-
-            // --- ROBUST ICON SHIM ---
-            const getIcon = (name) => {
-                const lib = window.lucide && window.lucide.icons ? window.lucide.icons : {};
-                const camelName = name.charAt(0).toLowerCase() + name.slice(1);
-                const iconNode = lib[name] || lib[camelName];
-                if (!iconNode) return () => null; 
-                return ({ color = "currentColor", size = 24, strokeWidth = 2, className = "", ...props }) => {
-                    return React.createElement(
-                        "svg",
-                        {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            width: size,
-                            height: size,
-                            viewBox: "0 0 24 24",
-                            fill: "none",
-                            stroke: color,
-                            strokeWidth: strokeWidth,
-                            strokeLinecap: "round",
-                            strokeLinejoin: "round",
-                            className: className,
-                            ...props
-                        },
-                        ...iconNode.map(([tag, attrs]) => React.createElement(tag, { ...attrs }))
-                    );
-                };
-            };
-
-            const LucideIcons = new Proxy({}, {
-                get: (target, prop) => {
-                    if (typeof prop !== 'string') return undefined;
-                    return getIcon(prop);
-                }
-            });
-
-            const { 
-              Hexagon, CircleCheck, CircleHelp, Play, Plus, Save, Type, X, Trash2, Pencil, 
-              Layout, Eye, RotateCw, FileJson, Upload, MapPin, ChevronRight, ChevronDown, 
-              ChevronUp, ChevronLeft, Trophy, Layers, ArrowUp, ArrowDown, Video, MonitorPlay, 
-              MousePointer2, Grid, FileVideo, Clock, Move, GripVertical, Lock, CircleAlert, 
-              CalendarClock, Loader2, ArrowRight, RotateCcw, Target
-            } = LucideIcons;
-
-            const lucideReact = LucideIcons; 
-
-            // --- PLAYER COMPONENTS ---
-            ${PLAYER_SCRIPT_TEMPLATE}
-
-            const StandalonePlayer = () => {
-                const renderPlayer = () => {
-                    switch(activity.type) {
-                        case 'Flervalg': return <MCPlayer data={activity.data} />;
-                        case 'Sant/Usant': return <TFPlayer data={activity.data} />;
-                        case 'Fyll inn': return <ClozePlayer data={activity.data} />;
-                        case 'Bilde Hotspot': return <HotspotPlayer data={activity.data} />;
-                        case 'Interaktiv Video': return <VideoPlayer data={activity.data} />;
-                        case 'Tidslinje': return <TimelinePlayer data={activity.data} />;
-                        case 'Dra og Slipp': return <DragDropPlayer data={activity.data} />;
-                        case 'Minnespel': return <MemoryPlayer data={activity.data} />;
-                        case 'Fleire saman': return <MixedPlayer data={activity.data} />;
-                        default: return <div>Ukjend aktivitet: {activity.type}</div>;
-                    }
-                };
-
-               return (
-                 <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900">
-                    <main className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
-                       <header className="bg-slate-800 text-white p-8">
-                          <h1 className="text-3xl font-bold">{activity.title}</h1>
-                          {activity.description && <p className="text-slate-300 text-lg mt-2">{activity.description}</p>}
-                       </header>
-                       <div className="p-8 md:p-14">
-                           {renderPlayer()}
-                       </div>
-                    </main>
-                 </div>
-               );
-            };
-
-            const root = ReactDOM.createRoot(document.getElementById('root'));
-            root.render(<StandalonePlayer />);
-            
-        } catch (err) {
-            console.error(err);
-            document.getElementById('error-container').style.display = 'block';
-            document.getElementById('error-container').innerHTML = '<strong>Runtime Error:</strong> ' + err.message + '<br/><small>' + err.stack + '</small>';
-        }
-    </script>
-</body>
-</html>
-    `;
-
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${activity.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const handleCreate = (type: string) => {
@@ -618,34 +469,36 @@ export default function HVLInteraktivApp() {
       </header>
 
       <main className="max-w-[1400px] mx-auto p-8 md:p-12">
-        {view === 'dashboard' && (
-          <Dashboard 
-            activities={activities} 
-            onCreate={handleCreate} 
-            onEdit={async (a) => { const full = await fetchFullActivity(a); setCurrentActivity(full); setView('editor'); }} 
-            onPlay={async (a) => { const full = await fetchFullActivity(a); setCurrentActivity(full); setView('player'); }} 
-            onDelete={handleDelete}
-            onDuplicate={async (a) => { const full = await fetchFullActivity(a); handleDuplicate(full); }}
-            onExport={handleExport}
-            onImport={handleImport}
-            isDeepLinking={user?.isDeepLinking}
-            onSelect={async (a) => { const full = await fetchFullActivity(a); handleDeepLinkSelect(full); }}
-          />
-        )}
-        {view === 'help' && <HelpPage />}
-        {view === 'editor' && currentActivity && <Editor activity={currentActivity} onSave={handleSave} onPreview={() => setView('player')} onClose={() => setView('dashboard')} />}
-        {view === 'player' && currentActivity && (
-          <div>
-            {user?.activityId && (
-               <div className="mb-6">
-                 <button onClick={() => { window.location.href = '/'; /* Reload to get out of single activity mode if needed */ }} className="flex items-center gap-2 text-slate-500 hover:text-cyan-700 font-bold">
-                    <ArrowLeft size={20}/> Tilbake til alle aktivitetar
-                 </button>
-               </div>
-            )}
-            <Player activity={currentActivity} onEdit={() => setView('editor')} />
-          </div>
-        )}
+        <ErrorBoundary key={view} componentName={view === 'dashboard' ? 'Dashbord' : view === 'editor' ? 'Redigering' : view === 'player' ? 'Aktivitet' : 'Hjelp'}>
+          {view === 'dashboard' && (
+            <Dashboard 
+              activities={activities} 
+              onCreate={handleCreate} 
+              onEdit={async (a) => { const full = await fetchFullActivity(a); setCurrentActivity(full); setView('editor'); }} 
+              onPlay={async (a) => { const full = await fetchFullActivity(a); setCurrentActivity(full); setView('player'); }} 
+              onDelete={handleDelete}
+              onDuplicate={async (a) => { const full = await fetchFullActivity(a); handleDuplicate(full); }}
+              onExport={handleExport}
+              onImport={handleImport}
+              isDeepLinking={user?.isDeepLinking}
+              onSelect={async (a) => { const full = await fetchFullActivity(a); handleDeepLinkSelect(full); }}
+            />
+          )}
+          {view === 'help' && <HelpPage />}
+          {view === 'editor' && currentActivity && <Editor activity={currentActivity} onSave={handleSave} onPreview={() => setView('player')} onClose={() => setView('dashboard')} />}
+          {view === 'player' && currentActivity && (
+            <div>
+              {user?.activityId && (
+                 <div className="mb-6">
+                   <button onClick={() => { window.location.href = '/'; /* Reload to get out of single activity mode if needed */ }} className="flex items-center gap-2 text-slate-500 hover:text-cyan-700 font-bold">
+                      <ArrowLeft size={20}/> Tilbake til alle aktivitetar
+                   </button>
+                 </div>
+              )}
+              <Player activity={currentActivity} onEdit={() => setView('editor')} />
+            </div>
+          )}
+        </ErrorBoundary>
       </main>
     </div>
   );

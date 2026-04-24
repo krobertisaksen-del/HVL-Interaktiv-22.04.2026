@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { X, CircleCheck, Plus, ChevronRight, Lock, CircleAlert, Loader2 } from 'lucide-react';
 import { CompletionScreen } from '../ui/CompletionScreen';
-import { PlayerProps } from '../../types';
+import { PlayerProps, Hotspot } from '../../types';
 
 const SafeImage = ({ src, alt, className, style }: { src: string; alt: string; className?: string; style?: React.CSSProperties }) => {
   const [error, setError] = useState(false);
@@ -41,7 +41,6 @@ const SafeImage = ({ src, alt, className, style }: { src: string; alt: string; c
 export const HotspotPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
   const scenes = useMemo(() => {
     if (data.scenes && data.scenes.length > 0) return data.scenes;
-    if (data.imageUrl) return [{ id: 'legacy', imageUrl: data.imageUrl, altText: data.altText, hotspots: data.hotspots || [] }];
     return [];
   }, [data]);
 
@@ -54,7 +53,7 @@ export const HotspotPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
   const currentScene = scenes[currentIndex];
   const isSceneFinished = useMemo(() => {
     if (!currentScene || !currentScene.hotspots) return true;
-    return currentScene.hotspots.every((h: any) => viewedSpots.includes(h.id));
+    return currentScene.hotspots.every((h: Hotspot) => viewedSpots.includes(h.id));
   }, [currentScene, viewedSpots]);
 
   useEffect(() => {
@@ -117,7 +116,7 @@ export const HotspotPlayer: React.FC<PlayerProps> = ({ data, onSuccess }) => {
                 </div>
             )}
             
-            {(currentScene.hotspots || []).map((hs: any) => (
+            {(currentScene.hotspots || []).map((hs: Hotspot) => (
                 <React.Fragment key={hs.id}>
                 <button 
                     onClick={() => handleSpotClick(hs.id)} 
