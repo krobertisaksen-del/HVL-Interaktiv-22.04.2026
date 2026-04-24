@@ -10,6 +10,7 @@ import { TimelinePlayer } from './players/TimelinePlayer';
 import { DragDropPlayer } from './players/DragDropPlayer';
 import { MemoryPlayer } from './players/MemoryPlayer';
 import { MixedPlayer } from './players/MixedPlayer';
+import { apiFetch as fetch } from '../lib/apiFetch';
 
 interface PlayerProps {
   activity: Activity;

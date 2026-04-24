@@ -8,6 +8,8 @@ import { DataTypes } from 'sequelize';
 import { Issuer, custom } from 'openid-client';
 import session from 'express-session';
 import multer from 'multer';
+import { S3Client } from '@aws-sdk/client-s3';
+import multerS3 from 'multer-s3';
 import express from 'express';
 import ConnectSessionSequelize from 'connect-session-sequelize';
 import { createServer as createViteServer } from 'vite';
@@ -212,6 +214,16 @@ setupFeide();
 // CRITICAL FOR PRODUCTION: Trust the reverse proxy (Load Balancer)
 lti.app.enable('trust proxy');
 
+// Set CSP header to allow framing from Canvas LMS and Feide
+lti.app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "frame-ancestors 'self' https://*.canvas.instructure.com https://canvas.instructure.com;"
+  );
+  res.removeHeader('X-Frame-Options');
+  next();
+});
+
 // 3. DEFINE ROUTES
 
 const uploadDir = path.join(__dirname, 'uploads');
@@ -219,15 +231,38 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir)
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, uniqueSuffix + path.extname(file.originalname))
-  }
-});
+let storage;
+if (process.env.S3_BUCKET && process.env.AWS_REGION) {
+  const s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    }
+  });
+  storage = multerS3({
+    s3: s3,
+    bucket: process.env.S3_BUCKET,
+    metadata: function (req, file, cb) {
+      cb(null, {fieldName: file.fieldname});
+    },
+    key: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+} else {
+  storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, uploadDir)
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, uniqueSuffix + path.extname(file.originalname))
+    }
+  });
+}
+
 const upload = multer({ 
   storage: storage,
   limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit overall, client side enforces 50mb video / 5mb img
@@ -240,7 +275,11 @@ lti.app.post('/api/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    return res.json({ url: `/uploads/${req.file.filename}` });
+    
+    // For S3 req.file.location, for disk req.file.filename
+    const fileUrl = req.file.location || `/uploads/${req.file.filename}`;
+    
+    return res.json({ url: fileUrl });
   } catch(error) {
     console.error('Error uploading file:', error);
     return res.status(500).json({ error: 'File upload failed' });

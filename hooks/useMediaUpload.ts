@@ -19,9 +19,16 @@ export const useMediaUpload = () => {
       const formData = new FormData();
       formData.append('file', file);
       
+      const ltik = new URLSearchParams(window.location.search).get('ltik') || sessionStorage.getItem('ltik');
+      const headers: Record<string, string> = {};
+      if (ltik) {
+        headers['Authorization'] = `Bearer ${ltik}`;
+      }
+      
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
+        headers,
       });
       
       if (!response.ok) {

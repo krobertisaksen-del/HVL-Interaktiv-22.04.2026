@@ -8,6 +8,14 @@ import { HelpPage } from './components/HelpPage';
 import { Editor } from './components/Editor';
 import { Player } from './components/Player';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { apiFetch as fetch } from './lib/apiFetch';
+
+// Initialize LTI Token
+const urlParams = new URLSearchParams(window.location.search);
+const ltik = urlParams.get('ltik') || sessionStorage.getItem('ltik');
+if (ltik) {
+  sessionStorage.setItem('ltik', ltik);
+}
 
 export default function HVLInteraktivApp() {
   const [view, setView] = useState<'dashboard' | 'editor' | 'player' | 'help'>('dashboard');
