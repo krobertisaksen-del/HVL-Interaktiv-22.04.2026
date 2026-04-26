@@ -8,11 +8,24 @@
   --hc-border: #e2e8f0;
 }
 
+html {
+  scroll-padding-top: 6rem; /* WCAG 2.4.11 Focus Not Obscured */
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--hc-bg);
   color: var(--hc-text);
 }
+
+/* WCAG 2.4.13 Focus Appearance */
+@layer base {
+  *:focus-visible {
+    outline: 2px solid var(--hc-primary, #0e7490);
+    outline-offset: 3px;
+  }
+}
+
 
 /* 
    Strict Black & White Mode 

@@ -48,6 +48,17 @@ Applikasjonen støtter både lokal fillagring direkte på disk og opplasting til
 
 ---
 
+## 📱 Mobilstøtte & Brukeropplevelse
+Aktivitetene og spiller-komponentene i applikasjonen er designet responsivt for å fungere sømløst på tvers av enheter (PC, nettbrett og mobil). Interaktive elementer, inkludert avanserte oppgavetyper som "Dra og Slipp" (Drag and Drop) støtter nå berøringsskjerm (touch-hendelser), slik at studentene kan løse oppgaver optimalt uansett plattform.
+
+## ♿ Tilgjengelighet & WCAG 2.2
+For å sikre at læringsressursene kan brukes av alle studenter har vi lagt stor vekt på universell utforming og løsninger i tråd med [WCAG 2.2](https://www.w3.org/TR/WCAG22/). Blant de mest sentrale implementeringene:
+
+- **1.4.11 / 2.4.13 Focus Appearance (Fokus synlighet):** Alle interaktive elementer har fått sterke, universelle fokusmarkører (cyan ringstruktur og avstand/offset) ved tastaturnavigasjon (Tab), slik at synshemmede og tastaturbrukere alltid ser hvor de er på siden.
+- **2.4.11 Focus Not Obscured (Fokus tildekkes ikke):** Rammeverket benytter nå solid scrolling-padding for å garantere at fokusert innhold aldri skjuler seg under flytende headere eller paneler, men alltid ruller automatisk sentrert inn i bildet.
+- **2.5.7 Dragging Movements (Dra- og slipp-bevegelser):** Vi har eliminert eksklusjonsbarrieren på "Dra og Slipp"-oppgaver. Istedenfor å kreve nøyaktige musebevegelser eller berøring over lange avstander, drar oppgaven nå utelukkende fordel av et "Klikk-for-å-velge + Klikk-for-å-plassere"-alternativ. Dette lar studenter løse krevende dra/slipp dynamikk med enkle klikk eller via Space/Enter på tastaturet.
+- **2.5.8 Target Size (Minimumsstørrelse på treffpunkt):** Kritiske knapper (slik som slett, navigasjon og sortering) har robuste hitbox-størrelser (minimum for bredde og høyde utvidet), sammen med generøse buffere som sikrer nøyaktighet og forhindrer feilklikk – spesielt viktig for skjermer og personer med motoriske utfordringer.
+
 ## 🎓 Oppsett for LMS (eksempelvis Canvas med Deep Linking)
 
 Når applikasjonen kjører på en offentlig og sikker URL (HTTPS), er den klar til å kobles til LMS via LTI 1.3. Slik setter du den opp i **Canvas**:

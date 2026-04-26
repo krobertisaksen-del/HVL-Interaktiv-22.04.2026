@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
+import { GripVertical, ChevronDown, ChevronUp, ArrowUp, ArrowDown } from 'lucide-react';
 import { DeleteButton } from './DeleteButton';
 
 interface SortableListProps {
@@ -58,6 +58,16 @@ export const SortableList: React.FC<SortableListProps> = ({ items, onUpdate, ren
     setDragPos(null);
   };
 
+  const moveItem = (e: React.MouseEvent, index: number, direction: -1 | 1) => {
+    e.stopPropagation();
+    if ((direction === -1 && index === 0) || (direction === 1 && index === items.length - 1)) return;
+    const newItems = [...items];
+    const temp = newItems[index];
+    newItems[index] = newItems[index + direction];
+    newItems[index + direction] = temp;
+    onUpdate(newItems);
+  };
+
   return (
     <div 
       className="space-y-4" 
@@ -92,6 +102,24 @@ export const SortableList: React.FC<SortableListProps> = ({ items, onUpdate, ren
               )}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex flex-col items-center mr-2">
+                <button 
+                  onClick={(e) => moveItem(e, index, -1)} 
+                  disabled={index === 0}
+                  className="p-1 min-w-[24px] min-h-[24px] flex items-center justify-center text-slate-400 hover:text-cyan-700 disabled:opacity-30 disabled:hover:text-slate-400 transition-colors"
+                  title="Flytt opp"
+                >
+                  <ArrowUp size={16} />
+                </button>
+                <button 
+                  onClick={(e) => moveItem(e, index, 1)} 
+                  disabled={index === items.length - 1}
+                  className="p-1 min-w-[24px] min-h-[24px] flex items-center justify-center text-slate-400 hover:text-cyan-700 disabled:opacity-30 disabled:hover:text-slate-400 transition-colors"
+                  title="Flytt ned"
+                >
+                  <ArrowDown size={16} />
+                </button>
+              </div>
               <button 
                 onClick={(e) => { e.stopPropagation(); toggleCollapse(item.id); }} 
                 className="p-2 text-slate-500 hover:text-slate-800 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all" 

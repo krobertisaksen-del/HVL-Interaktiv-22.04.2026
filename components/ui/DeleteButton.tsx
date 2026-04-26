@@ -15,7 +15,7 @@ export const DeleteButton = ({ onDelete }: { onDelete: () => void }) => {
     return (
       <button 
         onClick={(e) => { e.stopPropagation(); onDelete(); }} 
-        className="px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg font-bold hover:bg-red-700 transition-colors animate-in fade-in flex items-center gap-1"
+        className="px-3 py-1.5 min-h-[32px] bg-red-600 text-white text-xs rounded-lg font-bold hover:bg-red-700 transition-colors animate-in fade-in flex items-center gap-1"
         aria-label="Bekreft sletting"
       >
         <Trash2 size={12}/> Bekreft
@@ -26,7 +26,7 @@ export const DeleteButton = ({ onDelete }: { onDelete: () => void }) => {
   return (
     <button 
       onClick={(e) => { e.stopPropagation(); setConfirming(true); }} 
-      className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors" 
+      className="p-2 min-w-[32px] min-h-[32px] flex items-center justify-center text-slate-500 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors" 
       title="Slett"
       aria-label="Slett"
     >
